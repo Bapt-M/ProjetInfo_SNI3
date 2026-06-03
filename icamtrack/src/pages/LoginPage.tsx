@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 
@@ -22,10 +22,11 @@ export function LoginPage() {
     }
   }
 
-  // Redirect once profile is loaded after login
-  if (profile) {
-    navigate(profile.role === 'admin' ? '/admin/dashboard' : '/dashboard', { replace: true })
-  }
+  useEffect(() => {
+    if (profile) {
+      navigate(profile.role === 'admin' ? '/admin/dashboard' : '/dashboard', { replace: true })
+    }
+  }, [profile, navigate])
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center">

@@ -23,23 +23,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   })
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) loadProfile(session.user, session)
-      else setState(s => ({ ...s, loading: false }))
-    })
+    async function loadProfile(user: User, session: Session) {
+      const { data: profile } = await supabase
+        .from('profiles').select('*').eq('id', user.id).single()
+      setState({ user, profile: profile ?? null, session, loading: false })
+    }
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
-      if (session?.user) loadProfile(session.user, session)
-      else setState({ user: null, profile: null, session: null, loading: false })
+      if (session?.user) {
+        loadProfile(session.user, session)
+      } else {
+        setState({ user: null, profile: null, session: null, loading: false })
+      }
     })
     return () => subscription.unsubscribe()
   }, [])
-
-  async function loadProfile(user: User, session: Session) {
-    const { data: profile } = await supabase
-      .from('profiles').select('*').eq('id', user.id).single()
-    setState({ user, profile, session, loading: false })
-  }
 
   async function signIn(email: string, password: string) {
     const { error } = await supabase.auth.signInWithPassword({ email, password })
