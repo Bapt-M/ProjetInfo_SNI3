@@ -94,19 +94,23 @@ create policy "admin_update_profiles" on profiles
 
 -- Categories (read for all authenticated, write for admin)
 create policy "read_categories" on categories
-  for select using (auth.role() = 'authenticated');
+  for select using (auth.uid() is not null);
 create policy "admin_manage_categories" on categories
   for all using (is_admin());
 
 -- Equipment (read for all authenticated, write for admin)
 create policy "read_equipment" on equipment
-  for select using (auth.role() = 'authenticated');
+  for select using (auth.uid() is not null);
 create policy "admin_manage_equipment" on equipment
   for all using (is_admin());
 
 -- Loan requests
 create policy "read_own_requests" on loan_requests
   for select using (student_id = auth.uid() or is_admin());
+create policy "student_insert_requests" on loan_requests
+  for insert with check (student_id = auth.uid());
+create policy "admin_manage_requests" on loan_requests
+  for all using (is_admin());
 
 -- Loan items
 create policy "read_own_loan_items" on loan_items
@@ -114,5 +118,12 @@ create policy "read_own_loan_items" on loan_items
     exists (
       select 1 from loan_requests
       where id = loan_id and (student_id = auth.uid() or is_admin())
+    )
+  );
+create policy "student_insert_loan_items" on loan_items
+  for insert with check (
+    exists (
+      select 1 from loan_requests
+      where id = loan_id and student_id = auth.uid()
     )
   );
