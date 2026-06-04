@@ -1,6 +1,7 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { LayoutDashboard, Package, Tag, ClipboardList, Activity, History, Users, LogOut } from 'lucide-react'
 import { useAuth } from '../../hooks/useAuth'
+import { useDashboardStats } from '../../hooks/useDashboard'
 import { motion } from 'framer-motion'
 
 const nav = [
@@ -16,6 +17,7 @@ const nav = [
 export function AdminLayout() {
   const { signOut, profile } = useAuth()
   const location = useLocation()
+  const { data: stats } = useDashboardStats()
 
   return (
     <div className="min-h-screen bg-bg">
@@ -42,8 +44,10 @@ export function AdminLayout() {
                 <>
                   <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: dot }} />
                   {label}
-                  {badge && (
-                    <span className="text-[9px] font-extrabold bg-pink text-white px-1.5 py-0 leading-4">5</span>
+                  {badge && (stats?.pending ?? 0) > 0 && (
+                    <span className="text-[9px] font-extrabold bg-pink text-white px-1.5 py-0 leading-4">
+                      {stats?.pending}
+                    </span>
                   )}
                   {isActive && (
                     <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-fg" />
@@ -76,11 +80,11 @@ export function AdminLayout() {
         <div className="flex whitespace-nowrap marquee-track">
           {[1, 2].map(i => (
             <div key={i} className="flex items-center gap-8 px-12 text-[10px] font-bold uppercase tracking-widest text-muted">
-              <span className="flex items-center gap-1.5 border border-success/50 text-success px-2 py-0.5">● DISPO&nbsp;28</span>
-              <span className="flex items-center gap-1.5 border border-yellow-text/50 text-yellow-text px-2 py-0.5">● EMPRUNTÉS&nbsp;12</span>
-              <span className="flex items-center gap-1.5 border border-pink/50 text-pink px-2 py-0.5">⚠ RETARD&nbsp;3</span>
-              <span className="flex items-center gap-1.5 border border-cyan/50 text-cyan px-2 py-0.5">◌ EN ATTENTE&nbsp;5</span>
-              <span className="flex items-center gap-1.5 border border-border text-muted px-2 py-0.5">TOTAL&nbsp;48 MATÉRIELS</span>
+              <span className="flex items-center gap-1.5 border border-success/50 text-success px-2 py-0.5">● DISPO&nbsp;{stats?.available ?? '—'}</span>
+              <span className="flex items-center gap-1.5 border border-yellow-text/50 text-yellow-text px-2 py-0.5">● EMPRUNTÉS&nbsp;{stats?.borrowed ?? '—'}</span>
+              <span className="flex items-center gap-1.5 border border-pink/50 text-pink px-2 py-0.5">⚠ RETARD&nbsp;{stats?.late ?? '—'}</span>
+              <span className="flex items-center gap-1.5 border border-cyan/50 text-cyan px-2 py-0.5">◌ EN ATTENTE&nbsp;{stats?.pending ?? '—'}</span>
+              <span className="flex items-center gap-1.5 border border-border text-muted px-2 py-0.5">TOTAL&nbsp;{stats?.total ?? '—'} MATÉRIELS</span>
             </div>
           ))}
         </div>
