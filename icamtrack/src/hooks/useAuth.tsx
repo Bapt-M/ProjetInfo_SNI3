@@ -12,6 +12,7 @@ interface AuthState {
 
 interface AuthContext extends AuthState {
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>
+  signUp: (email: string, password: string, fullName: string) => Promise<{ error: Error | null }>
   signOut: () => Promise<void>
 }
 
@@ -44,11 +45,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { error }
   }
 
+  async function signUp(email: string, password: string, fullName: string) {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { full_name: fullName } },
+    })
+    return { error }
+  }
+
   async function signOut() {
     await supabase.auth.signOut()
   }
 
-  return <Context.Provider value={{ ...state, signIn, signOut }}>{children}</Context.Provider>
+  return <Context.Provider value={{ ...state, signIn, signUp, signOut }}>{children}</Context.Provider>
 }
 
 export function useAuth() {
