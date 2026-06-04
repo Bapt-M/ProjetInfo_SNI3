@@ -52,7 +52,7 @@ export function StudentLayout() {
       <div className="border-b-2 border-pink border-t-2 border-t-cyan h-9 overflow-hidden flex items-center bg-bg">
         <div className="flex whitespace-nowrap marquee-track">
           {[1, 2].map(i => (
-            <div key={i} className="flex items-center gap-8 px-12 text-[10px] font-bold uppercase tracking-widest text-muted">
+            <div key={i} className="flex items-center gap-16 px-32 text-[10px] font-bold uppercase tracking-widest text-muted">
               <span className="border border-success/50 text-success px-2 py-0.5">Catalogue disponible</span>
               <span className="border border-pink/50 text-pink px-2 py-0.5">Faites vos demandes →</span>
               <span className="border border-cyan/50 text-cyan px-2 py-0.5">Suivi en temps réel</span>
