@@ -54,18 +54,18 @@ create table loan_items (
 );
 
 -- Auto-create profile on signup
-create or replace function handle_new_user()
-returns trigger as $$
+create or replace function public.handle_new_user()
+returns trigger language plpgsql security definer set search_path = public as $$
 begin
-  insert into profiles (id, full_name, email)
+  insert into public.profiles (id, full_name, email)
   values (
     new.id,
     coalesce(new.raw_user_meta_data->>'full_name', ''),
-    new.email
+    coalesce(new.email, '')
   );
   return new;
 end;
-$$ language plpgsql security definer;
+$$;
 
 create trigger on_auth_user_created
   after insert on auth.users
