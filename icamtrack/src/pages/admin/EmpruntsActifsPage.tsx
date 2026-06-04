@@ -14,20 +14,20 @@ export function EmpruntsActifsPage() {
     qc.invalidateQueries({ queryKey: ['equipment'] })
   }
 
-  if (isLoading) return <p className="text-slate-500">Chargement...</p>
+  if (isLoading) return <p className="text-muted p-8 text-[11px] font-bold uppercase">Chargement...</p>
 
   return (
-    <div>
-      <h1 className="text-xl font-bold text-slate-800 mb-6">Emprunts actifs</h1>
-      {loans?.length === 0 && <p className="text-slate-400">Aucun emprunt en cours.</p>}
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+    <div className="p-6">
+      <h1 className="text-2xl font-bold uppercase tracking-[-0.5px] text-fg mb-6">Emprunts actifs</h1>
+      {loans?.length === 0 && <p className="text-muted text-[11px] font-bold uppercase tracking-[2px]">Aucun emprunt en cours.</p>}
+      <div className="bg-bg border border-border overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-slate-50 border-b border-slate-200">
+          <thead className="bg-surface border-b border-border">
             <tr>
-              <th className="text-left px-4 py-3 font-medium text-slate-600">Étudiant</th>
-              <th className="text-left px-4 py-3 font-medium text-slate-600">Matériel</th>
-              <th className="text-left px-4 py-3 font-medium text-slate-600">Depuis</th>
-              <th className="text-left px-4 py-3 font-medium text-slate-600">Retour prévu</th>
+              <th className="text-left px-4 py-3 text-[9px] font-bold uppercase tracking-[2px] text-muted">Étudiant</th>
+              <th className="text-left px-4 py-3 text-[9px] font-bold uppercase tracking-[2px] text-muted">Matériel</th>
+              <th className="text-left px-4 py-3 text-[9px] font-bold uppercase tracking-[2px] text-muted">Depuis</th>
+              <th className="text-left px-4 py-3 text-[9px] font-bold uppercase tracking-[2px] text-muted">Retour prévu</th>
               <th className="px-4 py-3" />
             </tr>
           </thead>
@@ -35,26 +35,26 @@ export function EmpruntsActifsPage() {
             {loans?.map(loan => {
               const isLate = loan.due_date ? new Date(loan.due_date) < new Date() : false
               return (
-                <tr key={loan.id} className={`border-b border-slate-100 ${isLate ? 'bg-amber-50' : 'hover:bg-slate-50'}`}>
-                  <td className="px-4 py-3 font-medium text-slate-800">{loan.student?.full_name}</td>
-                  <td className="px-4 py-3 text-slate-500 text-xs">
+                <tr key={loan.id} className={`border-b border-border transition-colors ${isLate ? 'bg-pink/5' : 'hover:bg-surface'}`}>
+                  <td className="px-4 py-3 font-bold uppercase text-xs tracking-wide text-fg">{loan.student?.full_name}</td>
+                  <td className="px-4 py-3 text-muted text-xs font-mono">
                     {loan.items?.map(i => i.equipment?.name ?? i.category?.name).join(', ')}
                   </td>
-                  <td className="px-4 py-3 text-slate-500">
+                  <td className="px-4 py-3 text-muted text-xs font-mono">
                     {new Date(loan.created_at).toLocaleDateString('fr-FR')}
                   </td>
                   <td className="px-4 py-3">
                     {loan.due_date
-                      ? <span className={isLate ? 'text-amber-700 font-medium' : 'text-slate-500'}>
+                      ? <span className={`text-[10px] font-bold uppercase border px-2 py-0.5 ${isLate ? 'border-pink text-pink' : 'border-border text-muted'}`}>
                           {new Date(loan.due_date).toLocaleDateString('fr-FR')}
                           {isLate && ' ⚠'}
                         </span>
-                      : <span className="text-slate-400">—</span>
+                      : <span className="text-muted text-xs font-mono">—</span>
                     }
                   </td>
                   <td className="px-4 py-3">
                     <button onClick={() => closeLoan(loan.id)}
-                      className="flex items-center gap-1 px-3 py-1.5 bg-primary text-white rounded-lg text-xs cursor-pointer hover:bg-slate-700">
+                      className="flex items-center gap-1 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[2px] border-2 border-success text-success hover:bg-success hover:text-white cursor-pointer transition-colors">
                       <CheckCircle size={12} /> Retour enregistré
                     </button>
                   </td>

@@ -1,8 +1,49 @@
 @import "tailwindcss";
 
 @theme {
-  --font-family-sans: 'Fira Sans', sans-serif;
-  --font-family-mono: 'Fira Code', monospace;
-  --color-primary: #334155;
-  --color-accent: #059669;
+  --font-family-sans:    'Space Grotesk', sans-serif;
+  --font-family-mono:    'DM Mono', monospace;
+
+  --color-bg:            #FFFFFF;
+  --color-surface:       #F7F7F5;
+  --color-fg:            #09090B;
+  --color-muted:         #71717A;
+  --color-border:        #E4E4E7;
+  --color-yellow:        #DFE104;
+  --color-yellow-text:   #B8980A;
+  --color-cyan:          #00C8E0;
+  --color-pink:          #FF2D78;
+  --color-success:       #00C060;
+  --color-orange:        #FF6B00;
+  --color-purple:        #7C3AED;
+
+  /* keep legacy aliases used in edge-cases */
+  --color-primary:       #09090B;
+  --color-accent:        #00C8E0;
+  --color-danger:        #FF2D78;
+  --color-warning:       #B8980A;
+  --color-pending:       #7C3AED;
+  --color-text:          #09090B;
+}
+
+/* Marquee animation */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.marquee-track { animation: marquee 16s linear infinite; }
+
+/* Gradient text utility */
+.gradient-text {
+  background: linear-gradient(135deg, #DFE104, #00C8E0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glass (kept for login page) */
+.glass {
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }

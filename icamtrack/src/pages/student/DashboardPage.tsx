@@ -1,81 +1,88 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { useMyLoanRequests } from '../../hooks/useLoanRequests'
 import { useAuth } from '../../hooks/useAuth'
 import type { LoanStatus } from '../../lib/types'
 
-const statusLabel: Record<LoanStatus, { label: string; color: string }> = {
-  pending: { label: 'En attente', color: 'bg-slate-100 text-slate-600' },
-  active: { label: 'En cours', color: 'bg-amber-100 text-amber-700' },
-  closed: { label: 'Clôturé', color: 'bg-emerald-100 text-emerald-700' },
-  rejected: { label: 'Refusé', color: 'bg-red-100 text-red-700' },
+const statusLabel: Record<LoanStatus, { label: string; cls: string }> = {
+  pending:  { label: 'En attente', cls: 'border-border text-muted' },
+  active:   { label: 'En cours',   cls: 'border-yellow-text text-yellow-text' },
+  closed:   { label: 'Clôturé',    cls: 'border-success text-success' },
+  rejected: { label: 'Refusé',     cls: 'border-pink text-pink' },
 }
 
 export function StudentDashboard() {
   const { profile } = useAuth()
   const { data: requests } = useMyLoanRequests()
-
-  const active = requests?.filter(r => r.status === 'active') ?? []
+  const active  = requests?.filter(r => r.status === 'active')  ?? []
   const pending = requests?.filter(r => r.status === 'pending') ?? []
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-bold text-slate-800">Bonjour, {profile?.full_name}</h1>
-        <p className="text-slate-500 text-sm mt-1">Bienvenue sur IcamTrack</p>
-      </div>
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+        <h1 className="text-3xl font-bold uppercase tracking-[-1px] leading-none">
+          Bonjour, <span className="text-yellow-text">{profile?.full_name}</span>
+        </h1>
+        <p className="text-[11px] font-bold uppercase tracking-[3px] text-muted mt-2">Bienvenue sur IcamTrack</p>
+      </motion.div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div className="bg-white border border-slate-200 rounded-xl p-4 border-l-4 border-l-amber-500">
-          <p className="text-2xl font-bold font-mono text-amber-600">{active.length}</p>
-          <p className="text-sm text-slate-500 mt-1">Emprunt(s) en cours</p>
+      <div className="grid grid-cols-2 gap-0 border border-border">
+        <div className="p-6 border-r border-border relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-[3px] bg-yellow-text" />
+          <div className="text-[10px] font-bold uppercase tracking-[3px] text-muted mb-3">En cours</div>
+          <div className="text-5xl font-bold font-mono tabular-nums text-fg">{active.length}</div>
+          <div className="text-[10px] font-bold uppercase tracking-[2px] text-yellow-text mt-2">Emprunt(s) actifs</div>
         </div>
-        <div className="bg-white border border-slate-200 rounded-xl p-4 border-l-4 border-l-slate-400">
-          <p className="text-2xl font-bold font-mono text-slate-600">{pending.length}</p>
-          <p className="text-sm text-slate-500 mt-1">Demande(s) en attente</p>
+        <div className="p-6 relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-[3px] bg-fg" />
+          <div className="text-[10px] font-bold uppercase tracking-[3px] text-muted mb-3">Queue</div>
+          <div className="text-5xl font-bold font-mono tabular-nums text-fg">{pending.length}</div>
+          <div className="text-[10px] font-bold uppercase tracking-[2px] text-muted mt-2">Demande(s) en attente</div>
         </div>
       </div>
 
       {active.length > 0 && (
-        <div className="bg-white rounded-xl border border-slate-200 p-4">
-          <div className="flex items-center justify-between mb-3">
-            <p className="font-medium text-slate-700 text-sm">Mes emprunts actifs</p>
-            <Link to="/mes-demandes" className="text-xs text-accent hover:underline flex items-center gap-1">
-              Voir tout <ArrowRight size={12} />
-            </Link>
+        <div className="border border-border">
+          <div className="flex items-center justify-between px-5 py-3 border-b-2 border-fg">
+            <span className="text-[10px] font-bold uppercase tracking-[3px] text-muted">Emprunts actifs</span>
+            <Link to="/mes-demandes" className="text-[10px] font-bold uppercase tracking-[2px] text-fg hover:underline">Voir tout →</Link>
           </div>
-          {active.map(loan => (
-            <div key={loan.id} className="py-2 border-b border-slate-100 last:border-0">
-              <p className="text-sm text-slate-700">
-                {loan.items?.map(i => i.equipment?.name ?? i.category?.name).join(', ')}
+          {active.map((loan, i) => (
+            <motion.div key={loan.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.05 }}
+              className="px-5 py-3.5 border-b border-border last:border-0 hover:bg-surface transition-colors">
+              <p className="text-xs font-bold uppercase tracking-wide text-fg">
+                {loan.items?.map(item => item.equipment?.name ?? item.category?.name).join(', ')}
               </p>
               {loan.due_date && (
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="font-mono text-[10px] text-muted mt-1">
                   Retour prévu le {new Date(loan.due_date).toLocaleDateString('fr-FR')}
                 </p>
               )}
-            </div>
+            </motion.div>
           ))}
         </div>
       )}
 
-      <div className="bg-white rounded-xl border border-slate-200 p-4">
-        <p className="font-medium text-slate-700 text-sm mb-3">Dernières demandes</p>
-        {requests?.slice(0, 5).map(req => {
+      <div className="border border-border">
+        <div className="flex items-center justify-between px-5 py-3 border-b-2 border-fg">
+          <span className="text-[10px] font-bold uppercase tracking-[3px] text-muted">Dernières demandes</span>
+        </div>
+        {requests?.slice(0, 5).map((req, i) => {
           const s = statusLabel[req.status]
           return (
-            <div key={req.id} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
+            <motion.div key={req.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.05 }}
+              className="flex items-center justify-between px-5 py-3.5 border-b border-border last:border-0 hover:bg-surface transition-colors">
               <div>
-                <p className="text-sm text-slate-700">
-                  {req.items?.map(i => i.category?.name).join(', ')}
+                <p className="text-xs font-bold uppercase tracking-wide text-fg">
+                  {req.items?.map(item => item.category?.name).join(', ')}
                 </p>
-                <p className="text-xs text-slate-400">{new Date(req.created_at).toLocaleDateString('fr-FR')}</p>
+                <p className="font-mono text-[10px] text-muted mt-0.5">{new Date(req.created_at).toLocaleDateString('fr-FR')}</p>
               </div>
-              <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${s.color}`}>{s.label}</span>
-            </div>
+              <span className={`text-[9px] font-bold uppercase tracking-[1px] border px-2 py-0.5 ${s.cls}`}>{s.label}</span>
+            </motion.div>
           )
         })}
-        {!requests?.length && <p className="text-slate-400 text-sm text-center py-4">Aucune demande pour l'instant.</p>}
+        {!requests?.length && <p className="px-5 py-6 text-[11px] font-bold uppercase tracking-[2px] text-muted">Aucune demande.</p>}
       </div>
     </div>
   )

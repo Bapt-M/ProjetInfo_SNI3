@@ -1,4 +1,4 @@
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { motion } from 'framer-motion'
 
 interface Props {
   available: number
@@ -6,27 +6,45 @@ interface Props {
   unavailable: number
 }
 
-const COLORS = ['#059669', '#F59E0B', '#DC2626']
-
 export function StatusDonut({ available, borrowed, unavailable }: Props) {
-  const data = [
-    { name: 'Disponible', value: available },
-    { name: 'Emprunté', value: borrowed },
-    { name: 'Indisponible', value: unavailable },
+  const total = available + borrowed + unavailable || 1
+  const bars = [
+    { label: 'Disponible',   value: available,   color: '#00C060', pct: Math.round(available / total * 100) },
+    { label: 'Emprunté',     value: borrowed,    color: '#B8980A', pct: Math.round(borrowed  / total * 100) },
+    { label: 'Indisponible', value: unavailable, color: '#FF2D78', pct: Math.round(unavailable / total * 100) },
   ]
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-4">
-      <p className="font-medium text-slate-700 mb-3 text-sm">Répartition des statuts</p>
-      <ResponsiveContainer width="100%" height={200}>
-        <PieChart>
-          <Pie data={data} cx="50%" cy="50%" innerRadius={55} outerRadius={80} dataKey="value" paddingAngle={2}>
-            {data.map((_, i) => <Cell key={String(i)} fill={COLORS[i]} />)}
-          </Pie>
-          <Tooltip formatter={(v: unknown) => [`${v} item(s)`, '']} />
-          <Legend iconSize={10} />
-        </PieChart>
-      </ResponsiveContainer>
-    </div>
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: 0.15 }}
+      className="bg-bg border border-border p-6"
+    >
+      <p className="text-[10px] font-bold uppercase tracking-[3px] text-muted border-b border-border pb-3 mb-5">
+        Répartition des statuts
+      </p>
+      <div className="space-y-4">
+        {bars.map(bar => (
+          <div key={bar.label}>
+            <div className="flex justify-between items-center mb-1.5">
+              <span className="text-[10px] font-bold uppercase tracking-[2px]" style={{ color: bar.color }}>
+                {bar.label}
+              </span>
+              <span className="font-mono text-sm font-bold text-fg tabular-nums">{bar.value}</span>
+            </div>
+            <div className="h-[3px] bg-border w-full">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${bar.pct}%` }}
+                transition={{ duration: 0.7, delay: 0.3, ease: 'easeOut' }}
+                className="h-full"
+                style={{ background: bar.color }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </motion.div>
   )
 }

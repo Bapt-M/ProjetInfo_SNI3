@@ -55,18 +55,18 @@ export function LoanRequestForm({ onClose }: Props) {
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-lg p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-bold text-slate-800">Nouvelle demande d'emprunt</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-700 cursor-pointer"><X size={18} /></button>
+      <div className="bg-bg border-2 border-fg shadow-xl w-full max-w-lg">
+        <div className="bg-fg px-6 py-4 flex items-center justify-between">
+          <h2 className="font-mono text-yellow font-bold text-sm uppercase tracking-tight">Nouvelle demande</h2>
+          <button onClick={onClose} className="text-muted hover:text-yellow cursor-pointer"><X size={16} /></button>
         </div>
-        <form onSubmit={submit} className="space-y-4">
+        <form onSubmit={submit} className="p-6 space-y-4">
           <div>
-            <p className="text-sm font-medium text-slate-700 mb-2">Ajouter des articles</p>
+            <p className="text-[10px] font-bold uppercase tracking-[2px] text-muted mb-2">Ajouter des articles</p>
             <div className="flex flex-wrap gap-2">
               {categories?.map(cat => (
                 <button key={cat.id} type="button" onClick={() => addCategory(cat)}
-                  className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-sm cursor-pointer">
+                  className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[2px] border-2 border-border text-muted hover:border-fg hover:text-fg cursor-pointer transition-colors">
                   + {cat.name}
                 </button>
               ))}
@@ -74,18 +74,18 @@ export function LoanRequestForm({ onClose }: Props) {
           </div>
 
           {cart.length > 0 && (
-            <div className="border border-slate-200 rounded-lg overflow-hidden">
+            <div className="border-2 border-border overflow-hidden">
               {cart.map(item => (
-                <div key={item.category.id} className="flex items-center justify-between px-4 py-2 border-b border-slate-100 last:border-0">
-                  <span className="text-sm font-medium text-slate-700">{item.category.name}</span>
+                <div key={item.category.id} className="flex items-center justify-between px-4 py-2 border-b border-border last:border-0">
+                  <span className="text-xs font-bold uppercase tracking-wide text-fg">{item.category.name}</span>
                   <div className="flex items-center gap-2">
                     <button type="button" onClick={() => changeQty(item.category.id, -1)}
-                      className="p-1 text-slate-500 hover:text-slate-800 cursor-pointer"><Minus size={12} /></button>
-                    <span className="w-6 text-center text-sm font-mono">{item.quantity}</span>
+                      className="p-1 text-muted hover:text-fg cursor-pointer transition-colors"><Minus size={12} /></button>
+                    <span className="w-6 text-center text-sm font-mono font-bold text-fg">{item.quantity}</span>
                     <button type="button" onClick={() => changeQty(item.category.id, 1)}
-                      className="p-1 text-slate-500 hover:text-slate-800 cursor-pointer"><Plus size={12} /></button>
+                      className="p-1 text-muted hover:text-fg cursor-pointer transition-colors"><Plus size={12} /></button>
                     <button type="button" onClick={() => removeCategory(item.category.id)}
-                      className="p-1 text-red-400 hover:text-red-600 cursor-pointer"><X size={12} /></button>
+                      className="p-1 text-muted hover:text-pink cursor-pointer transition-colors"><X size={12} /></button>
                   </div>
                 </div>
               ))}
@@ -93,21 +93,21 @@ export function LoanRequestForm({ onClose }: Props) {
           )}
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Date de retour prévue (optionnel)</label>
+            <label className="block text-[10px] font-bold uppercase tracking-[2px] text-muted mb-1.5">Date de retour prévue (optionnel)</label>
             <input type="date" value={dueDate} onChange={e => setDueDate(e.target.value)}
               min={new Date().toISOString().split('T')[0]}
-              className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
+              className="border-2 border-border bg-surface px-3 py-2 text-sm text-fg focus:outline-none focus:border-fg transition-colors" />
           </div>
 
-          {error && <p role="alert" className="text-red-600 text-sm">{error}</p>}
+          {error && <p role="alert" className="text-pink text-[10px] font-bold uppercase">{error}</p>}
 
           <div className="flex gap-2 justify-end">
             <button type="button" onClick={onClose}
-              className="px-4 py-2 text-sm border border-slate-300 rounded-lg cursor-pointer hover:bg-slate-50">
+              className="px-4 py-2 text-[10px] font-bold uppercase tracking-[2px] border-2 border-border text-muted hover:border-fg hover:text-fg cursor-pointer transition-colors">
               Annuler
             </button>
             <button type="submit" disabled={loading}
-              className="px-4 py-2 text-sm bg-accent text-white rounded-lg cursor-pointer hover:bg-emerald-700 disabled:opacity-50">
+              className="px-4 py-2 text-[10px] font-bold uppercase tracking-[2px] bg-fg text-yellow hover:bg-yellow hover:text-black border-2 border-fg cursor-pointer disabled:opacity-50 transition-colors">
               {loading ? 'Envoi...' : 'Soumettre la demande'}
             </button>
           </div>

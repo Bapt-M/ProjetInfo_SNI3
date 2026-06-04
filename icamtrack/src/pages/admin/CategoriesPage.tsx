@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Pencil, Trash2, Plus, X, Check } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { useCategories, useCreateCategory, useUpdateCategory, useDeleteCategory } from '../../hooks/useCategories'
 import type { Category } from '../../lib/types'
 
@@ -8,7 +9,6 @@ export function CategoriesPage() {
   const create = useCreateCategory()
   const update = useUpdateCategory()
   const del = useDeleteCategory()
-
   const [showForm, setShowForm] = useState(false)
   const [editing, setEditing] = useState<Category | null>(null)
   const [name, setName] = useState('')
@@ -25,59 +25,71 @@ export function CategoriesPage() {
     cancel()
   }
 
-  if (isLoading) return <p className="text-slate-500">Chargement...</p>
+  if (isLoading) return <p className="text-muted p-8">Chargement...</p>
 
   return (
-    <div>
+    <div className="p-6">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-bold text-slate-800">Catégories</h1>
-        <button onClick={openCreate} className="flex items-center gap-2 bg-accent text-white px-3 py-2 rounded-lg text-sm cursor-pointer hover:bg-emerald-700">
+        <div>
+          <h1 className="text-2xl font-bold uppercase tracking-[-0.5px] text-fg">Catégories</h1>
+          <p className="text-muted text-[11px] font-bold uppercase tracking-[2px] mt-1">{categories?.length ?? 0} catégorie(s)</p>
+        </div>
+        <button
+          onClick={openCreate}
+          className="flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-[2px] bg-fg text-yellow hover:bg-yellow hover:text-black border-2 border-fg cursor-pointer transition-colors"
+        >
           <Plus size={14} /> Nouvelle catégorie
         </button>
       </div>
 
       {showForm && (
-        <form onSubmit={submit} className="bg-white border border-slate-200 rounded-xl p-4 mb-4 flex gap-3 items-end">
+        <motion.form
+          initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
+          onSubmit={submit}
+          className="bg-surface border-2 border-border p-4 mb-4 flex gap-3 items-end"
+        >
           <div className="flex-1">
-            <label className="block text-sm font-medium text-slate-700 mb-1">Nom *</label>
+            <label className="block text-[10px] font-bold uppercase tracking-[2px] text-muted mb-1.5">Nom *</label>
             <input required value={name} onChange={e => setName(e.target.value)}
-              className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
+              className="w-full bg-bg border-2 border-border px-3 py-2 text-sm text-fg focus:outline-none focus:border-fg transition-colors" />
           </div>
           <div className="flex-1">
-            <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
+            <label className="block text-[10px] font-bold uppercase tracking-[2px] text-muted mb-1.5">Description</label>
             <input value={description} onChange={e => setDescription(e.target.value)}
-              className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
+              className="w-full bg-bg border-2 border-border px-3 py-2 text-sm text-fg focus:outline-none focus:border-fg transition-colors" />
           </div>
-          <button type="submit" className="p-2 bg-accent text-white rounded-lg cursor-pointer hover:bg-emerald-700"><Check size={16} /></button>
-          <button type="button" onClick={cancel} className="p-2 bg-slate-200 rounded-lg cursor-pointer hover:bg-slate-300"><X size={16} /></button>
-        </form>
+          <button type="submit" className="p-2 border-2 border-success text-success hover:bg-success hover:text-white cursor-pointer transition-colors"><Check size={16} /></button>
+          <button type="button" onClick={cancel} className="p-2 border-2 border-border text-muted hover:border-fg hover:text-fg cursor-pointer transition-colors"><X size={16} /></button>
+        </motion.form>
       )}
 
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div className="bg-bg border border-border overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-slate-50 border-b border-slate-200">
+          <thead className="border-b border-border">
             <tr>
-              <th className="text-left px-4 py-3 font-medium text-slate-600">Nom</th>
-              <th className="text-left px-4 py-3 font-medium text-slate-600">Description</th>
-              <th className="px-4 py-3" />
+              <th className="text-left px-5 py-3 text-[9px] font-bold uppercase tracking-[2px] text-muted">Nom</th>
+              <th className="text-left px-5 py-3 text-[9px] font-bold uppercase tracking-[2px] text-muted">Description</th>
+              <th className="px-5 py-3" />
             </tr>
           </thead>
           <tbody>
-            {categories?.map(cat => (
-              <tr key={cat.id} className="border-b border-slate-100 hover:bg-slate-50">
-                <td className="px-4 py-3 font-medium text-slate-800">{cat.name}</td>
-                <td className="px-4 py-3 text-slate-500">{cat.description ?? '—'}</td>
-                <td className="px-4 py-3 flex gap-2 justify-end">
-                  <button onClick={() => openEdit(cat)} className="p-1.5 text-slate-400 hover:text-slate-700 cursor-pointer"><Pencil size={14} /></button>
-                  <button onClick={() => del.mutate(cat.id)} className="p-1.5 text-slate-400 hover:text-red-600 cursor-pointer"><Trash2 size={14} /></button>
+            {categories?.map((cat, i) => (
+              <motion.tr
+                key={cat.id}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.04 }}
+                className="border-b border-border last:border-0 hover:bg-surface transition-colors"
+              >
+                <td className="px-5 py-3 font-bold uppercase text-xs tracking-wide text-fg">{cat.name}</td>
+                <td className="px-5 py-3 text-muted text-xs">{cat.description ?? '—'}</td>
+                <td className="px-5 py-3 flex gap-2 justify-end">
+                  <button onClick={() => openEdit(cat)} className="p-1.5 text-muted hover:text-fg cursor-pointer transition-colors"><Pencil size={14} /></button>
+                  <button onClick={() => del.mutate(cat.id)} className="p-1.5 text-muted hover:text-pink cursor-pointer transition-colors"><Trash2 size={14} /></button>
                 </td>
-              </tr>
+              </motion.tr>
             ))}
           </tbody>
         </table>
-        {categories?.length === 0 && (
-          <p className="text-center text-slate-400 py-8">Aucune catégorie. Créez-en une.</p>
-        )}
+        {categories?.length === 0 && <p className="text-center text-muted py-8 text-[11px] font-bold uppercase tracking-[2px]">Aucune catégorie.</p>}
       </div>
     </div>
   )

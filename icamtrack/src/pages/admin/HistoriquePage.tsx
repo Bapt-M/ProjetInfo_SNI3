@@ -12,42 +12,42 @@ export function AdminHistorique() {
   ) ?? []
 
   return (
-    <div>
-      <h1 className="text-xl font-bold text-slate-800 mb-4">Historique</h1>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold uppercase tracking-[-0.5px] text-fg mb-4">Historique</h1>
       <input
         placeholder="Rechercher par étudiant ou équipement..."
         value={search}
         onChange={e => setSearch(e.target.value)}
-        className="w-full max-w-sm border border-slate-300 rounded-lg px-3 py-2 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-primary"
+        className="w-full max-w-sm bg-surface border-2 border-border px-4 py-2 text-sm text-fg placeholder-muted mb-4 focus:outline-none focus:border-fg transition-colors"
       />
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div className="bg-bg border border-border overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-slate-50 border-b border-slate-200">
+          <thead className="bg-surface border-b border-border">
             <tr>
-              <th className="text-left px-4 py-3 font-medium text-slate-600">Étudiant</th>
-              <th className="text-left px-4 py-3 font-medium text-slate-600">Matériel</th>
-              <th className="text-left px-4 py-3 font-medium text-slate-600">Emprunté le</th>
-              <th className="text-left px-4 py-3 font-medium text-slate-600">Retourné le</th>
+              <th className="text-left px-4 py-3 text-[9px] font-bold uppercase tracking-[2px] text-muted">Étudiant</th>
+              <th className="text-left px-4 py-3 text-[9px] font-bold uppercase tracking-[2px] text-muted">Matériel</th>
+              <th className="text-left px-4 py-3 text-[9px] font-bold uppercase tracking-[2px] text-muted">Emprunté le</th>
+              <th className="text-left px-4 py-3 text-[9px] font-bold uppercase tracking-[2px] text-muted">Retourné le</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map(loan => (
-              <tr key={loan.id} className="border-b border-slate-100 hover:bg-slate-50">
-                <td className="px-4 py-3 font-medium text-slate-800">{loan.student?.full_name}</td>
-                <td className="px-4 py-3 text-slate-500 text-xs">
+              <tr key={loan.id} className="border-b border-border hover:bg-surface transition-colors">
+                <td className="px-4 py-3 font-bold uppercase text-xs tracking-wide text-fg">{loan.student?.full_name}</td>
+                <td className="px-4 py-3 text-muted text-xs font-mono">
                   {loan.items?.map(i => i.equipment?.name ?? i.category?.name).join(', ')}
                 </td>
-                <td className="px-4 py-3 text-slate-500">
+                <td className="px-4 py-3 text-muted text-xs font-mono">
                   {new Date(loan.created_at).toLocaleDateString('fr-FR')}
                 </td>
-                <td className="px-4 py-3 text-slate-500">
+                <td className="px-4 py-3 text-muted text-xs font-mono">
                   {loan.closed_at ? new Date(loan.closed_at).toLocaleDateString('fr-FR') : '—'}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-        {filtered.length === 0 && <p className="text-center text-slate-400 py-8">Aucun résultat.</p>}
+        {filtered.length === 0 && <p className="text-center text-muted py-8 text-[11px] font-bold uppercase tracking-[2px]">Aucun résultat.</p>}
       </div>
     </div>
   )

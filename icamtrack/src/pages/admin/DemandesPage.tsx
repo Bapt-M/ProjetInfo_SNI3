@@ -35,17 +35,17 @@ function ApproveModal({ loan, onClose }: { loan: LoanRequest; onClose: () => voi
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-lg p-6">
-        <h2 className="font-bold text-slate-800 mb-1">Valider la demande</h2>
-        <p className="text-sm text-slate-500 mb-4">Étudiant : {loan.student?.full_name}</p>
+      <div className="bg-bg border-2 border-fg shadow-xl w-full max-w-lg p-6">
+        <h2 className="text-[10px] font-bold uppercase tracking-[3px] text-muted mb-1">Valider la demande</h2>
+        <p className="text-sm font-bold text-fg mb-4">Étudiant : {loan.student?.full_name}</p>
         <div className="space-y-3">
           {loan.items?.map((item: LoanItem) => (
             <div key={item.id} className="flex items-center gap-3">
-              <span className="text-sm text-slate-700 flex-1">{item.category?.name}</span>
+              <span className="text-sm text-fg flex-1 font-bold uppercase text-xs tracking-wide">{item.category?.name}</span>
               <select
                 value={assignments[item.id] ?? ''}
                 onChange={e => setAssignments(a => ({ ...a, [item.id]: e.target.value }))}
-                className="border border-slate-300 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                className="bg-surface border-2 border-border px-2 py-1.5 text-sm text-fg focus:outline-none focus:border-fg transition-colors"
               >
                 <option value="">Choisir un item...</option>
                 {equipment
@@ -59,10 +59,11 @@ function ApproveModal({ loan, onClose }: { loan: LoanRequest; onClose: () => voi
             </div>
           ))}
         </div>
-        {error && <p role="alert" className="text-red-600 text-sm mt-3">{error}</p>}
+        {error && <p role="alert" className="text-pink text-[10px] font-bold uppercase mt-3">{error}</p>}
         <div className="flex gap-2 justify-end mt-4">
-          <button onClick={onClose} className="px-4 py-2 text-sm border border-slate-300 rounded-lg cursor-pointer hover:bg-slate-50">Annuler</button>
-          <button onClick={submit} disabled={loading} className="px-4 py-2 text-sm bg-accent text-white rounded-lg cursor-pointer hover:bg-emerald-700 disabled:opacity-50">
+          <button onClick={onClose} className="px-4 py-2 text-[10px] font-bold uppercase tracking-[2px] border-2 border-border text-muted hover:border-fg hover:text-fg cursor-pointer transition-colors">Annuler</button>
+          <button onClick={submit} disabled={loading}
+            className="px-4 py-2 text-[10px] font-bold uppercase tracking-[2px] bg-fg text-yellow hover:bg-yellow hover:text-black border-2 border-fg cursor-pointer disabled:opacity-50 transition-colors">
             {loading ? 'Validation...' : 'Confirmer'}
           </button>
         </div>
@@ -84,33 +85,33 @@ export function DemandesPage() {
     qc.invalidateQueries({ queryKey: ['loan_requests'] })
   }
 
-  if (isLoading) return <p className="text-slate-500">Chargement...</p>
+  if (isLoading) return <p className="text-muted p-8 text-[11px] font-bold uppercase">Chargement...</p>
 
   return (
-    <div>
-      <h1 className="text-xl font-bold text-slate-800 mb-6">Demandes en attente</h1>
-      {requests?.length === 0 && <p className="text-slate-400">Aucune demande en attente.</p>}
+    <div className="p-6">
+      <h1 className="text-2xl font-bold uppercase tracking-[-0.5px] text-fg mb-6">Demandes en attente</h1>
+      {requests?.length === 0 && <p className="text-muted text-[11px] font-bold uppercase tracking-[2px]">Aucune demande en attente.</p>}
       <div className="space-y-3">
         {requests?.map(req => (
-          <div key={req.id} className="bg-white border border-slate-200 rounded-xl p-4 flex items-start justify-between">
+          <div key={req.id} className="bg-bg border border-border p-4 flex items-start justify-between hover:bg-surface transition-colors">
             <div>
-              <p className="font-medium text-slate-800">{req.student?.full_name}</p>
-              <p className="text-sm text-slate-500 mt-1">
+              <p className="font-bold uppercase text-xs tracking-wide text-fg">{req.student?.full_name}</p>
+              <p className="text-muted text-xs mt-1">
                 {req.items?.map(i => i.category?.name).join(', ')}
-                {' '}<span className="text-xs text-slate-400">({req.items?.length} item(s))</span>
+                {' '}<span className="text-muted">({req.items?.length} item(s))</span>
               </p>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-muted text-[10px] mt-1 font-mono">
                 {new Date(req.created_at).toLocaleDateString('fr-FR')}
                 {req.due_date && ` · Retour prévu le ${new Date(req.due_date).toLocaleDateString('fr-FR')}`}
               </p>
             </div>
             <div className="flex gap-2">
               <button onClick={() => setApproving(req)}
-                className="flex items-center gap-1 px-3 py-1.5 bg-accent text-white rounded-lg text-sm cursor-pointer hover:bg-emerald-700">
+                className="flex items-center gap-1 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[2px] border-2 border-success text-success hover:bg-success hover:text-white cursor-pointer transition-colors">
                 <Check size={14} /> Valider
               </button>
               <button onClick={() => reject(req)}
-                className="flex items-center gap-1 px-3 py-1.5 bg-red-100 text-red-700 rounded-lg text-sm cursor-pointer hover:bg-red-200">
+                className="flex items-center gap-1 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[2px] border-2 border-pink text-pink hover:bg-pink hover:text-white cursor-pointer transition-colors">
                 <X size={14} /> Refuser
               </button>
             </div>
