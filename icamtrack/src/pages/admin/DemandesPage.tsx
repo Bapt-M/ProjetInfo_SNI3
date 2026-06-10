@@ -88,13 +88,13 @@ export function DemandesPage() {
   if (isLoading) return <p className="text-muted p-8 text-[11px] font-bold uppercase">Chargement...</p>
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <h1 className="text-2xl font-bold uppercase tracking-[-0.5px] text-fg mb-6">Demandes en attente</h1>
       {requests?.length === 0 && <p className="text-muted text-[11px] font-bold uppercase tracking-[2px]">Aucune demande en attente.</p>}
       <div className="space-y-3">
         {requests?.map(req => (
-          <div key={req.id} className="bg-bg border border-border p-4 flex items-start justify-between hover:bg-surface transition-colors">
-            <div>
+          <div key={req.id} className="bg-bg border border-border p-4 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 hover:bg-surface transition-colors">
+            <div className="min-w-0">
               <p className="font-bold uppercase text-xs tracking-wide text-fg">{req.student?.full_name}</p>
               <p className="text-muted text-xs mt-1">
                 {req.items?.map(i => i.category?.name).join(', ')}
