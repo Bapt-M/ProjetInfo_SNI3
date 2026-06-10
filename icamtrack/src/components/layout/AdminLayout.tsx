@@ -1,18 +1,18 @@
 import { useState, useEffect } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
-import { LayoutDashboard, Package, Tag, ClipboardList, Activity, History, Users, LogOut, Menu, X } from 'lucide-react'
+import { LogOut, Menu, X } from 'lucide-react'
 import { useAuth } from '../../hooks/useAuth'
 import { useDashboardStats } from '../../hooks/useDashboard'
 import { motion } from 'framer-motion'
 
 const nav = [
-  { to: '/admin/dashboard',      label: 'Dashboard',    Icon: LayoutDashboard, dot: '#09090B' },
-  { to: '/admin/materiel',       label: 'Matériel',     Icon: Package,         dot: '#00C8E0' },
-  { to: '/admin/categories',     label: 'Catégories',   Icon: Tag,             dot: '#71717A' },
-  { to: '/admin/demandes',       label: 'Demandes',     Icon: ClipboardList,   dot: '#FF2D78', badge: true },
-  { to: '/admin/emprunts-actifs',label: 'Emprunts',     Icon: Activity,        dot: '#FF6B00' },
-  { to: '/admin/historique',     label: 'Historique',   Icon: History,         dot: '#71717A' },
-  { to: '/admin/utilisateurs',   label: 'Utilisateurs', Icon: Users,           dot: '#7C3AED' },
+  { to: '/admin/dashboard',      label: 'Dashboard',    dot: '#09090B' },
+  { to: '/admin/materiel',       label: 'Matériel',     dot: '#00C8E0' },
+  { to: '/admin/categories',     label: 'Catégories',   dot: '#71717A' },
+  { to: '/admin/demandes',       label: 'Demandes',     dot: '#FF2D78', badge: true },
+  { to: '/admin/emprunts-actifs',label: 'Emprunts',     dot: '#FF6B00' },
+  { to: '/admin/historique',     label: 'Historique',   dot: '#71717A' },
+  { to: '/admin/utilisateurs',   label: 'Utilisateurs', dot: '#7C3AED' },
 ]
 
 export function AdminLayout() {
@@ -106,7 +106,7 @@ export function AdminLayout() {
       {/* Panel */}
       <div
         id="mobile-drawer"
-        inert={!drawerOpen || undefined}
+        inert={!drawerOpen ? '' : undefined}
         className={`fixed inset-y-0 left-0 z-50 w-64 bg-surface border-r border-border transform transition-transform duration-200 sm:hidden flex flex-col ${drawerOpen ? 'translate-x-0' : '-translate-x-full'}`}
       >
         <div className="flex items-center justify-between px-4 h-14 border-b border-border shrink-0">

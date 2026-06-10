@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
-import { LayoutDashboard, Search, ClipboardList, History, LogOut, Menu, X } from 'lucide-react'
+import { LogOut, Menu, X } from 'lucide-react'
 import { useAuth } from '../../hooks/useAuth'
 import { motion } from 'framer-motion'
 
 const nav = [
-  { to: '/dashboard',     label: 'Accueil',      Icon: LayoutDashboard, dot: '#09090B' },
-  { to: '/catalogue',     label: 'Catalogue',    Icon: Search,          dot: '#00C8E0' },
-  { to: '/mes-demandes',  label: 'Mes demandes', Icon: ClipboardList,   dot: '#FF2D78' },
-  { to: '/historique',    label: 'Historique',   Icon: History,         dot: '#71717A' },
+  { to: '/dashboard',     label: 'Accueil',      dot: '#09090B' },
+  { to: '/catalogue',     label: 'Catalogue',    dot: '#00C8E0' },
+  { to: '/mes-demandes',  label: 'Mes demandes', dot: '#FF2D78' },
+  { to: '/historique',    label: 'Historique',   dot: '#71717A' },
 ]
 
 export function StudentLayout() {
@@ -81,7 +81,7 @@ export function StudentLayout() {
       />
       <div
         id="student-drawer"
-        inert={!drawerOpen || undefined}
+        inert={!drawerOpen ? '' : undefined}
         className={`fixed inset-y-0 left-0 z-50 w-64 bg-surface border-r border-border transform transition-transform duration-200 sm:hidden flex flex-col ${drawerOpen ? 'translate-x-0' : '-translate-x-full'}`}
       >
         <div className="flex items-center justify-between px-4 h-14 border-b border-border shrink-0">
