@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { LayoutDashboard, Package, Tag, ClipboardList, Activity, History, Users, LogOut, Menu, X } from 'lucide-react'
 import { useAuth } from '../../hooks/useAuth'
@@ -21,6 +21,15 @@ export function AdminLayout() {
   const { data: stats } = useDashboardStats()
   const [drawerOpen, setDrawerOpen] = useState(false)
 
+  useEffect(() => {
+    if (!drawerOpen) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setDrawerOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [drawerOpen])
+
   return (
     <div className="min-h-screen bg-bg">
       {/* ── TOPBAR ── */}
@@ -33,8 +42,10 @@ export function AdminLayout() {
         {/* Mobile: hamburger */}
         <button
           onClick={() => setDrawerOpen(true)}
-          className="sm:hidden flex items-center justify-center px-4 text-muted hover:text-fg transition-colors cursor-pointer"
+          aria-expanded={drawerOpen}
+          aria-controls="mobile-drawer"
           aria-label="Ouvrir le menu"
+          className="sm:hidden flex items-center justify-center px-4 text-muted hover:text-fg transition-colors cursor-pointer"
         >
           <Menu size={18} />
         </button>
@@ -93,12 +104,16 @@ export function AdminLayout() {
         onClick={() => setDrawerOpen(false)}
       />
       {/* Panel */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-surface border-r border-border transform transition-transform duration-200 sm:hidden flex flex-col ${drawerOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <div
+        id="mobile-drawer"
+        inert={!drawerOpen || undefined}
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-surface border-r border-border transform transition-transform duration-200 sm:hidden flex flex-col ${drawerOpen ? 'translate-x-0' : '-translate-x-full'}`}
+      >
         <div className="flex items-center justify-between px-4 h-14 border-b border-border shrink-0">
           <span className="font-mono font-bold text-base uppercase tracking-tight">
             Icam<span className="text-yellow">Track</span>
           </span>
-          <button onClick={() => setDrawerOpen(false)} className="text-muted hover:text-fg cursor-pointer">
+          <button onClick={() => setDrawerOpen(false)} aria-label="Fermer le menu" className="text-muted hover:text-fg cursor-pointer">
             <X size={18} />
           </button>
         </div>
