@@ -19,7 +19,7 @@ export function LoanTable({ loans }: Props) {
         <thead>
           <tr className="border-b border-border">
             <th className="text-left px-5 py-2.5 text-[9px] font-bold uppercase tracking-[2px] text-muted">Étudiant</th>
-            <th className="text-left px-5 py-2.5 text-[9px] font-bold uppercase tracking-[2px] text-muted">Matériel</th>
+            <th className="hidden sm:table-cell text-left px-5 py-2.5 text-[9px] font-bold uppercase tracking-[2px] text-muted">Matériel</th>
             <th className="text-left px-5 py-2.5 text-[9px] font-bold uppercase tracking-[2px] text-muted">Retour prévu</th>
           </tr>
         </thead>
@@ -34,8 +34,13 @@ export function LoanTable({ loans }: Props) {
                 transition={{ delay: 0.05 * i }}
                 className={`border-b border-border last:border-0 hover:bg-surface transition-colors ${isLate ? 'bg-pink/5' : ''}`}
               >
-                <td className="px-5 py-3 font-bold uppercase text-xs tracking-wide text-fg">{loan.student?.full_name}</td>
-                <td className="px-5 py-3 font-mono text-xs text-muted">
+                <td className="px-5 py-3">
+                  <div className="font-bold uppercase text-xs tracking-wide text-fg">{loan.student?.full_name}</div>
+                  <div className="text-muted text-[10px] font-mono mt-0.5 sm:hidden">
+                    {loan.items?.map(item => item.equipment?.name ?? item.category?.name).join(', ')}
+                  </div>
+                </td>
+                <td className="hidden sm:table-cell px-5 py-3 font-mono text-xs text-muted">
                   {loan.items?.map(item => item.equipment?.name ?? item.category?.name).join(', ')}
                 </td>
                 <td className="px-5 py-3">
