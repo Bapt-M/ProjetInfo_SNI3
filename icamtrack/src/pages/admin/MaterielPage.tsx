@@ -44,7 +44,7 @@ export function MaterielPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold uppercase tracking-[-0.5px] text-fg">Matériel</h1>
         <button
@@ -87,8 +87,8 @@ export function MaterielPage() {
             <thead className="bg-surface border-b border-border">
               <tr>
                 <th className="text-left px-4 py-3 text-[9px] font-bold uppercase tracking-[2px] text-muted">Nom</th>
-                <th className="text-left px-4 py-3 text-[9px] font-bold uppercase tracking-[2px] text-muted">Catégorie</th>
-                <th className="text-left px-4 py-3 text-[9px] font-bold uppercase tracking-[2px] text-muted">N° série</th>
+                <th className="hidden sm:table-cell text-left px-4 py-3 text-[9px] font-bold uppercase tracking-[2px] text-muted">Catégorie</th>
+                <th className="hidden sm:table-cell text-left px-4 py-3 text-[9px] font-bold uppercase tracking-[2px] text-muted">N° série</th>
                 <th className="text-left px-4 py-3 text-[9px] font-bold uppercase tracking-[2px] text-muted">Statut</th>
                 <th className="px-4 py-3" />
               </tr>
@@ -98,9 +98,14 @@ export function MaterielPage() {
                 const s = statusLabel[eq.status]
                 return (
                   <tr key={eq.id} className="border-b border-border hover:bg-surface transition-colors">
-                    <td className="px-4 py-3 font-bold uppercase text-xs tracking-wide text-fg">{eq.name}</td>
-                    <td className="px-4 py-3 text-muted text-xs">{eq.category?.name ?? '—'}</td>
-                    <td className="px-4 py-3 text-muted font-mono text-xs">{eq.serial_number ?? '—'}</td>
+                    <td className="px-4 py-3">
+                      <div className="font-bold uppercase text-xs tracking-wide text-fg">{eq.name}</div>
+                      <div className="text-muted text-[10px] font-mono mt-0.5 sm:hidden">
+                        {eq.category?.name ?? '—'} · {eq.serial_number ?? '—'}
+                      </div>
+                    </td>
+                    <td className="hidden sm:table-cell px-4 py-3 text-muted text-xs">{eq.category?.name ?? '—'}</td>
+                    <td className="hidden sm:table-cell px-4 py-3 text-muted font-mono text-xs">{eq.serial_number ?? '—'}</td>
                     <td className="px-4 py-3">
                       <span className={`px-2 py-0.5 text-[9px] font-bold uppercase tracking-[1px] ${s.color}`}>{s.label}</span>
                     </td>
