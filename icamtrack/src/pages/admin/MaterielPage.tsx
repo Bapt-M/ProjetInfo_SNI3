@@ -109,9 +109,11 @@ export function MaterielPage() {
                     <td className="px-4 py-3">
                       <span className={`px-2 py-0.5 text-[9px] font-bold uppercase tracking-[1px] ${s.color}`}>{s.label}</span>
                     </td>
-                    <td className="px-4 py-3 flex gap-2 justify-end">
-                      <button onClick={() => openEdit(eq)} className="p-1.5 text-muted hover:text-fg cursor-pointer transition-colors"><Pencil size={14} /></button>
-                      <button onClick={() => del.mutate(eq.id)} className="p-1.5 text-muted hover:text-pink cursor-pointer transition-colors"><Trash2 size={14} /></button>
+                    <td className="px-4 py-3">
+                      <div className="flex gap-2 justify-end">
+                        <button onClick={() => openEdit(eq)} className="p-1.5 text-muted hover:text-fg cursor-pointer transition-colors"><Pencil size={14} /></button>
+                        <button onClick={() => del.mutate(eq.id)} className="p-1.5 text-muted hover:text-pink cursor-pointer transition-colors"><Trash2 size={14} /></button>
+                      </div>
                     </td>
                   </tr>
                 )

@@ -25,6 +25,11 @@ export function StudentLayout() {
     return () => window.removeEventListener('keydown', onKey)
   }, [drawerOpen])
 
+  useEffect(() => {
+    document.body.style.overflow = drawerOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [drawerOpen])
+
   return (
     <div className="min-h-screen bg-bg">
       <header className="bg-surface border-b border-border sticky top-0 z-50 flex items-stretch h-14">
