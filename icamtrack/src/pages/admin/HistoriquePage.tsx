@@ -12,7 +12,7 @@ export function AdminHistorique() {
   ) ?? []
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <h1 className="text-2xl font-bold uppercase tracking-[-0.5px] text-fg mb-4">Historique</h1>
       <input
         placeholder="Rechercher par étudiant ou équipement..."
@@ -25,22 +25,27 @@ export function AdminHistorique() {
           <thead className="bg-surface border-b border-border">
             <tr>
               <th className="text-left px-4 py-3 text-[9px] font-bold uppercase tracking-[2px] text-muted">Étudiant</th>
-              <th className="text-left px-4 py-3 text-[9px] font-bold uppercase tracking-[2px] text-muted">Matériel</th>
+              <th className="hidden sm:table-cell text-left px-4 py-3 text-[9px] font-bold uppercase tracking-[2px] text-muted">Matériel</th>
               <th className="text-left px-4 py-3 text-[9px] font-bold uppercase tracking-[2px] text-muted">Emprunté le</th>
-              <th className="text-left px-4 py-3 text-[9px] font-bold uppercase tracking-[2px] text-muted">Retourné le</th>
+              <th className="hidden sm:table-cell text-left px-4 py-3 text-[9px] font-bold uppercase tracking-[2px] text-muted">Retourné le</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map(loan => (
               <tr key={loan.id} className="border-b border-border hover:bg-surface transition-colors">
-                <td className="px-4 py-3 font-bold uppercase text-xs tracking-wide text-fg">{loan.student?.full_name}</td>
-                <td className="px-4 py-3 text-muted text-xs font-mono">
+                <td className="px-4 py-3">
+                  <div className="font-bold uppercase text-xs tracking-wide text-fg">{loan.student?.full_name}</div>
+                  <div className="text-muted text-[10px] font-mono mt-0.5 sm:hidden">
+                    {loan.items?.map(i => i.equipment?.name ?? i.category?.name).join(', ')}
+                  </div>
+                </td>
+                <td className="hidden sm:table-cell px-4 py-3 text-muted text-xs font-mono">
                   {loan.items?.map(i => i.equipment?.name ?? i.category?.name).join(', ')}
                 </td>
                 <td className="px-4 py-3 text-muted text-xs font-mono">
                   {new Date(loan.created_at).toLocaleDateString('fr-FR')}
                 </td>
-                <td className="px-4 py-3 text-muted text-xs font-mono">
+                <td className="hidden sm:table-cell px-4 py-3 text-muted text-xs font-mono">
                   {loan.closed_at ? new Date(loan.closed_at).toLocaleDateString('fr-FR') : '—'}
                 </td>
               </tr>
