@@ -19,7 +19,7 @@ export function AdminDashboard() {
   return (
     <div>
       {/* Page header */}
-      <div className="flex items-end justify-between px-8 py-6 border-b-2 border-fg">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between px-4 sm:px-8 py-6 border-b-2 border-fg gap-4">
         <div>
           <h1 className="text-4xl font-bold uppercase tracking-[-1.5px] leading-none">
             Tableau <span className="text-yellow-text">de bord</span>
@@ -30,7 +30,7 @@ export function AdminDashboard() {
         </div>
         <div className="flex gap-2">
           <Link to="/admin/demandes"
-            className="text-[10px] font-bold uppercase tracking-[2px] border-2 border-fg bg-fg text-yellow px-4 py-2.5 hover:bg-yellow hover:text-black transition-colors cursor-pointer">
+            className="w-full sm:w-auto text-center text-[10px] font-bold uppercase tracking-[2px] border-2 border-fg bg-fg text-yellow px-4 py-2.5 hover:bg-yellow hover:text-black transition-colors cursor-pointer">
             Demandes ({pendingLoans?.length ?? 0}) →
           </Link>
         </div>
@@ -39,7 +39,7 @@ export function AdminDashboard() {
       {/* KPI grid */}
       <motion.div
         variants={container} initial="hidden" animate="show"
-        className="grid grid-cols-4 border-b-2 border-fg"
+        className="grid grid-cols-2 sm:grid-cols-4 border-b-2 border-fg"
       >
         <KPICard label="Total matériels" value={stats?.total ?? 0}   color="default" />
         <KPICard label="Empruntés"        value={stats?.borrowed ?? 0} color="yellow" />
@@ -57,9 +57,9 @@ export function AdminDashboard() {
       </motion.div>
 
       {/* Content */}
-      <div className="grid grid-cols-3 border-b border-border">
+      <div className="grid grid-cols-1 sm:grid-cols-3 border-b border-border">
         {/* Répartition */}
-        <div className="border-r border-border p-6">
+        <div className="hidden sm:block border-r border-border p-6">
           <StatusDonut
             available={stats?.available ?? 0}
             borrowed={stats?.borrowed ?? 0}
@@ -68,8 +68,8 @@ export function AdminDashboard() {
         </div>
 
         {/* Demandes en attente */}
-        <div className="col-span-2">
-          <div className="flex items-center justify-between px-6 py-3 border-b-2 border-fg">
+        <div className="col-span-1 sm:col-span-2">
+          <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-b-2 border-fg">
             <span className="text-[10px] font-bold uppercase tracking-[3px] text-muted">Demandes en attente</span>
             <Link to="/admin/demandes" className="text-[10px] font-bold uppercase tracking-[2px] text-fg hover:underline cursor-pointer">
               Voir toutes →
@@ -81,7 +81,7 @@ export function AdminDashboard() {
               initial={{ opacity: 0, x: -6 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.1 + i * 0.05 }}
-              className="flex items-center justify-between px-6 py-3.5 border-b border-border last:border-0 hover:bg-surface transition-colors"
+              className="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-border last:border-0 hover:bg-surface transition-colors"
             >
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 border-2 border-fg bg-yellow text-black text-xs font-extrabold flex items-center justify-center uppercase">
@@ -98,13 +98,13 @@ export function AdminDashboard() {
             </motion.div>
           ))}
           {!pendingLoans?.length && (
-            <p className="px-6 py-8 text-[11px] font-bold uppercase tracking-[2px] text-muted">Aucune demande en attente.</p>
+            <p className="px-4 sm:px-6 py-8 text-[11px] font-bold uppercase tracking-[2px] text-muted">Aucune demande en attente.</p>
           )}
         </div>
       </div>
 
       {/* Loan table */}
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <LoanTable loans={activeLoans ?? []} />
       </div>
     </div>
