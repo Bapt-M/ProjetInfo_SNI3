@@ -10,8 +10,9 @@ create table packs (
 create table pack_items (
   id          uuid primary key default uuid_generate_v4(),
   pack_id     uuid not null references packs(id) on delete cascade,
-  category_id uuid not null references categories(id),
-  quantity    int  not null default 1 check (quantity > 0)
+  category_id uuid not null references categories(id) on delete restrict,
+  quantity    int  not null default 1 check (quantity > 0),
+  unique (pack_id, category_id)
 );
 
 -- RLS

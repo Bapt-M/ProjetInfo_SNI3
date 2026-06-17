@@ -56,17 +56,30 @@ export function useUpdatePack() {
         .eq('id', values.id)
       if (packError) throw packError
 
-      const { error: deleteError } = await supabase
-        .from('pack_items')
-        .delete()
-        .eq('pack_id', values.id)
-      if (deleteError) throw deleteError
-
       if (values.items.length > 0) {
-        const { error: itemsError } = await supabase
+        const { error: upsertError } = await supabase
           .from('pack_items')
-          .insert(values.items.map(i => ({ pack_id: values.id, category_id: i.category_id, quantity: i.quantity })))
-        if (itemsError) throw itemsError
+          .upsert(
+            values.items.map(i => ({ pack_id: values.id, category_id: i.category_id, quantity: i.quantity })),
+            { onConflict: 'pack_id,category_id' }
+          )
+        if (upsertError) throw upsertError
+      }
+
+      const newCategoryIds = values.items.map(i => i.category_id)
+      if (newCategoryIds.length > 0) {
+        const { error: deleteError } = await supabase
+          .from('pack_items')
+          .delete()
+          .eq('pack_id', values.id)
+          .not('category_id', 'in', `(${newCategoryIds.map(id => `"${id}"`).join(',')})`)
+        if (deleteError) throw deleteError
+      } else {
+        const { error: deleteError } = await supabase
+          .from('pack_items')
+          .delete()
+          .eq('pack_id', values.id)
+        if (deleteError) throw deleteError
       }
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['packs'] }),
