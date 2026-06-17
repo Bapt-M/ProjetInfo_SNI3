@@ -47,6 +47,7 @@ export function PacksPage() {
             {editing ? 'Modifier le pack' : 'Nouveau pack'}
           </h2>
           <PackForm
+            key={editing?.id ?? 'new'}
             defaultValues={editing ?? undefined}
             onSubmit={handleSubmit}
             onCancel={cancel}

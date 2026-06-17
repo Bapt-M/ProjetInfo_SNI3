@@ -72,7 +72,7 @@ export function useUpdatePack() {
           .from('pack_items')
           .delete()
           .eq('pack_id', values.id)
-          .not('category_id', 'in', `(${newCategoryIds.map(id => `"${id}"`).join(',')})`)
+          .not('category_id', 'in', `(${newCategoryIds.join(',')})`)
         if (deleteError) throw deleteError
       } else {
         const { error: deleteError } = await supabase
