@@ -48,3 +48,19 @@ export interface LoanRequest {
   student?: Profile
   items?: LoanItem[]
 }
+
+export interface Pack {
+  id: string
+  name: string
+  description: string | null
+  created_at: string
+  items?: PackItem[]
+}
+
+export interface PackItem {
+  id: string
+  pack_id: string
+  category_id: string
+  quantity: number
+  category?: Category
+}
