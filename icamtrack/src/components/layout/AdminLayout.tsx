@@ -9,6 +9,7 @@ const nav = [
   { to: '/admin/dashboard',      label: 'Dashboard',    dot: '#09090B' },
   { to: '/admin/materiel',       label: 'Matériel',     dot: '#00C8E0' },
   { to: '/admin/categories',     label: 'Catégories',   dot: '#71717A' },
+  { to: '/admin/packs',          label: 'Packs',        dot: '#22c55e' },
   { to: '/admin/demandes',       label: 'Demandes',     dot: '#FF2D78', badge: true },
   { to: '/admin/emprunts-actifs',label: 'Emprunts',     dot: '#FF6B00' },
   { to: '/admin/historique',     label: 'Historique',   dot: '#71717A' },

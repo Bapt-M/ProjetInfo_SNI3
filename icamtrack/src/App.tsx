@@ -14,6 +14,7 @@ const StudentHistorique = lazy(() => import('./pages/student/HistoriquePage').th
 const AdminDashboard = lazy(() => import('./pages/admin/DashboardPage').then(m => ({ default: m.AdminDashboard })))
 const MaterielPage = lazy(() => import('./pages/admin/MaterielPage').then(m => ({ default: m.MaterielPage })))
 const CategoriesPage = lazy(() => import('./pages/admin/CategoriesPage').then(m => ({ default: m.CategoriesPage })))
+const PacksPage = lazy(() => import('./pages/admin/PacksPage').then(m => ({ default: m.PacksPage })))
 const DemandesPage = lazy(() => import('./pages/admin/DemandesPage').then(m => ({ default: m.DemandesPage })))
 const EmpruntsActifsPage = lazy(() => import('./pages/admin/EmpruntsActifsPage').then(m => ({ default: m.EmpruntsActifsPage })))
 const AdminHistorique = lazy(() => import('./pages/admin/HistoriquePage').then(m => ({ default: m.AdminHistorique })))
@@ -43,6 +44,7 @@ export default function App() {
                 <Route path="/admin/dashboard" element={<AdminDashboard />} />
                 <Route path="/admin/materiel" element={<MaterielPage />} />
                 <Route path="/admin/categories" element={<CategoriesPage />} />
+                <Route path="/admin/packs" element={<PacksPage />} />
                 <Route path="/admin/demandes" element={<DemandesPage />} />
                 <Route path="/admin/emprunts-actifs" element={<EmpruntsActifsPage />} />
                 <Route path="/admin/historique" element={<AdminHistorique />} />
