@@ -26,12 +26,8 @@
   --color-text:          #09090B;
 }
 
-/* Marquee animation */
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-.marquee-track { animation: marquee 16s linear infinite; }
+/* Marquee (figé — pas d'animation) */
+.marquee-track { justify-content: center; width: 100%; }
 
 /* Gradient text utility */
 .gradient-text {

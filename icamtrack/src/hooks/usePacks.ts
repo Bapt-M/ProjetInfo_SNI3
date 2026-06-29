@@ -8,7 +8,7 @@ export function usePacks() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('packs')
-        .select('*, items:pack_items(*, category:categories(id,name))')
+        .select('*, items:pack_items(*, equipment:equipment(id,name,category_id,category:categories(id,name)))')
         .order('name')
       if (error) throw error
       return data as Pack[]
@@ -22,7 +22,7 @@ export function useCreatePack() {
     mutationFn: async (values: {
       name: string
       description: string
-      items: { category_id: string; quantity: number }[]
+      items: { equipment_id: string; quantity: number }[]
     }) => {
       const { data: pack, error: packError } = await supabase
         .from('packs')
@@ -33,7 +33,7 @@ export function useCreatePack() {
       if (values.items.length > 0) {
         const { error: itemsError } = await supabase
           .from('pack_items')
-          .insert(values.items.map(i => ({ pack_id: pack.id, category_id: i.category_id, quantity: i.quantity })))
+          .insert(values.items.map(i => ({ pack_id: pack.id, equipment_id: i.equipment_id, quantity: i.quantity })))
         if (itemsError) throw itemsError
       }
     },
@@ -48,7 +48,7 @@ export function useUpdatePack() {
       id: string
       name: string
       description: string
-      items: { category_id: string; quantity: number }[]
+      items: { equipment_id: string; quantity: number }[]
     }) => {
       const { error: packError } = await supabase
         .from('packs')
@@ -60,19 +60,19 @@ export function useUpdatePack() {
         const { error: upsertError } = await supabase
           .from('pack_items')
           .upsert(
-            values.items.map(i => ({ pack_id: values.id, category_id: i.category_id, quantity: i.quantity })),
-            { onConflict: 'pack_id,category_id' }
+            values.items.map(i => ({ pack_id: values.id, equipment_id: i.equipment_id, quantity: i.quantity })),
+            { onConflict: 'pack_id,equipment_id' }
           )
         if (upsertError) throw upsertError
       }
 
-      const newCategoryIds = values.items.map(i => i.category_id)
-      if (newCategoryIds.length > 0) {
+      const newEquipmentIds = values.items.map(i => i.equipment_id)
+      if (newEquipmentIds.length > 0) {
         const { error: deleteError } = await supabase
           .from('pack_items')
           .delete()
           .eq('pack_id', values.id)
-          .not('category_id', 'in', `(${newCategoryIds.join(',')})`)
+          .not('equipment_id', 'in', `(${newEquipmentIds.join(',')})`)
         if (deleteError) throw deleteError
       } else {
         const { error: deleteError } = await supabase

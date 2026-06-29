@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Plus, Pencil, Trash2 } from 'lucide-react'
+import { Fragment, useMemo, useState } from 'react'
+import { Plus, Pencil, Trash2, ChevronRight, ChevronDown } from 'lucide-react'
 import { useEquipment, useCreateEquipment, useUpdateEquipment, useDeleteEquipment } from '../../hooks/useEquipment'
 import { useCategories } from '../../hooks/useCategories'
 import { EquipmentForm } from '../../components/EquipmentForm'
@@ -25,6 +25,26 @@ export function MaterielPage() {
   const create = useCreateEquipment()
   const update = useUpdateEquipment()
   const del = useDeleteEquipment()
+
+  const [expanded, setExpanded] = useState<Set<string>>(new Set())
+  function toggle(name: string) {
+    setExpanded(prev => {
+      const next = new Set(prev)
+      next.has(name) ? next.delete(name) : next.add(name)
+      return next
+    })
+  }
+
+  // Regroupe les unités sous un même nom de produit.
+  const groups = useMemo(() => {
+    const map = new Map<string, { name: string; category_name: string; units: Equipment[] }>()
+    for (const eq of equipment ?? []) {
+      const g = map.get(eq.name) ?? { name: eq.name, category_name: eq.category?.name ?? '—', units: [] }
+      g.units.push(eq)
+      map.set(eq.name, g)
+    }
+    return [...map.values()]
+  }, [equipment])
 
   function openCreate() { setEditing(null); setShowForm(true) }
   function openEdit(eq: Equipment) { setEditing(eq); setShowForm(true) }
@@ -94,28 +114,64 @@ export function MaterielPage() {
               </tr>
             </thead>
             <tbody>
-              {equipment?.map(eq => {
-                const s = statusLabel[eq.status]
+              {groups.map(g => {
+                const isOpen = expanded.has(g.name)
+                const available = g.units.filter(u => u.status === 'available').length
                 return (
-                  <tr key={eq.id} className="border-b border-border hover:bg-surface transition-colors">
-                    <td className="px-4 py-3">
-                      <div className="font-bold uppercase text-xs tracking-wide text-fg">{eq.name}</div>
-                      <div className="text-muted text-[10px] font-mono mt-0.5 sm:hidden">
-                        {eq.category?.name ?? '—'} · {eq.serial_number ?? '—'}
-                      </div>
-                    </td>
-                    <td className="hidden sm:table-cell px-4 py-3 text-muted text-xs">{eq.category?.name ?? '—'}</td>
-                    <td className="hidden sm:table-cell px-4 py-3 text-muted font-mono text-xs">{eq.serial_number ?? '—'}</td>
-                    <td className="px-4 py-3">
-                      <span className={`px-2 py-0.5 text-[9px] font-bold uppercase tracking-[1px] ${s.color}`}>{s.label}</span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex gap-2 justify-end">
-                        <button onClick={() => openEdit(eq)} className="p-1.5 text-muted hover:text-fg cursor-pointer transition-colors"><Pencil size={14} /></button>
-                        <button onClick={() => del.mutate(eq.id)} className="p-1.5 text-muted hover:text-pink cursor-pointer transition-colors"><Trash2 size={14} /></button>
-                      </div>
-                    </td>
-                  </tr>
+                  <Fragment key={g.name}>
+                    {/* Ligne produit — cliquable pour déplier */}
+                    <tr
+                      className="border-b border-border hover:bg-surface transition-colors cursor-pointer"
+                      onClick={() => toggle(g.name)}
+                    >
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          {isOpen
+                            ? <ChevronDown size={14} className="text-muted shrink-0" />
+                            : <ChevronRight size={14} className="text-muted shrink-0" />}
+                          <div>
+                            <div className="font-bold uppercase text-xs tracking-wide text-fg">{g.name}</div>
+                            <div className="text-muted text-[10px] font-mono mt-0.5 sm:hidden">
+                              {g.category_name} · {g.units.length} unité{g.units.length > 1 ? 's' : ''}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="hidden sm:table-cell px-4 py-3 text-muted text-xs">{g.category_name}</td>
+                      <td className="hidden sm:table-cell px-4 py-3 text-muted font-mono text-xs">
+                        {g.units.length} unité{g.units.length > 1 ? 's' : ''}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className={`px-2 py-0.5 text-[9px] font-bold uppercase tracking-[1px] ${available > 0 ? 'border border-success text-success' : 'border border-pink text-pink'}`}>
+                          {available} / {g.units.length} dispo
+                        </span>
+                      </td>
+                      <td className="px-4 py-3" />
+                    </tr>
+
+                    {/* Unités du produit */}
+                    {isOpen && g.units.map(u => {
+                      const s = statusLabel[u.status]
+                      return (
+                        <tr key={u.id} className="border-b border-border bg-surface/40">
+                          <td className="px-4 py-2 pl-10">
+                            <span className="font-mono text-xs text-muted sm:hidden">{u.serial_number ?? '—'}</span>
+                          </td>
+                          <td className="hidden sm:table-cell px-4 py-2" />
+                          <td className="hidden sm:table-cell px-4 py-2 text-muted font-mono text-xs">{u.serial_number ?? '—'}</td>
+                          <td className="px-4 py-2">
+                            <span className={`px-2 py-0.5 text-[9px] font-bold uppercase tracking-[1px] ${s.color}`}>{s.label}</span>
+                          </td>
+                          <td className="px-4 py-2">
+                            <div className="flex gap-2 justify-end">
+                              <button onClick={() => openEdit(u)} className="p-1.5 text-muted hover:text-fg cursor-pointer transition-colors"><Pencil size={14} /></button>
+                              <button onClick={() => del.mutate(u.id)} className="p-1.5 text-muted hover:text-pink cursor-pointer transition-colors"><Trash2 size={14} /></button>
+                            </div>
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </Fragment>
                 )
               })}
             </tbody>

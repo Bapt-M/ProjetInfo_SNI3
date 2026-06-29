@@ -49,6 +49,19 @@ export interface LoanRequest {
   items?: LoanItem[]
 }
 
+export type NotificationType = 'request' | 'overdue' | 'returned'
+
+export interface AppNotification {
+  id: string
+  user_id: string
+  type: NotificationType
+  title: string
+  body: string | null
+  link: string | null
+  read: boolean
+  created_at: string
+}
+
 export interface Pack {
   id: string
   name: string
@@ -60,7 +73,7 @@ export interface Pack {
 export interface PackItem {
   id: string
   pack_id: string
-  category_id: string
+  equipment_id: string
   quantity: number
-  category?: Category
+  equipment?: Equipment
 }

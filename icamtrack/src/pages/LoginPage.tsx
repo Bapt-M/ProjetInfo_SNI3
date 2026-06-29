@@ -66,13 +66,11 @@ export function LoginPage() {
       {/* Marquee */}
       <div className="border-b-2 border-pink border-t-2 border-t-cyan h-8 overflow-hidden flex items-center bg-bg">
         <div className="flex whitespace-nowrap marquee-track">
-          {[1, 2].map(i => (
-            <div key={i} className="flex items-center gap-16 px-32 text-[10px] font-bold uppercase tracking-widest text-muted">
-              <span className="border border-cyan/40 text-cyan px-2 py-0.5">ICAM — Dépt. Informatique</span>
-              <span className="border border-success/40 text-success px-2 py-0.5">Inventaire centralisé</span>
-              <span className="border border-pink/40 text-pink px-2 py-0.5">Emprunts en temps réel</span>
-            </div>
-          ))}
+          <div className="flex items-center gap-16 px-32 text-[10px] font-bold uppercase tracking-widest text-muted">
+            <span className="border border-cyan/40 text-cyan px-2 py-0.5">ICAM — Dépt. Informatique</span>
+            <span className="border border-success/40 text-success px-2 py-0.5">Inventaire centralisé</span>
+            <span className="border border-pink/40 text-pink px-2 py-0.5">Emprunts en temps réel</span>
+          </div>
         </div>
       </div>
 

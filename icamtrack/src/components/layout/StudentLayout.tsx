@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { LogOut, Menu, X } from 'lucide-react'
 import { useAuth } from '../../hooks/useAuth'
+import { NotificationBell } from '../NotificationBell'
 import { motion } from 'framer-motion'
 
 const nav = [
@@ -72,6 +73,7 @@ export function StudentLayout() {
         </nav>
 
         <div className="flex items-center gap-3 px-5 border-l border-border shrink-0 ml-auto">
+          <NotificationBell />
           <span className="text-[11px] font-bold uppercase tracking-wider text-muted hidden md:block">{profile?.full_name}</span>
           <button onClick={signOut} className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-muted hover:text-pink border border-border hover:border-pink px-3 py-1.5 transition-colors cursor-pointer">
             <LogOut size={11} /> Sortir
@@ -86,7 +88,7 @@ export function StudentLayout() {
       />
       <div
         id="student-drawer"
-        inert={!drawerOpen ? '' : undefined}
+        inert={!drawerOpen || undefined}
         className={`fixed inset-y-0 left-0 z-50 w-64 bg-surface border-r border-border transform transition-transform duration-200 sm:hidden flex flex-col ${drawerOpen ? 'translate-x-0' : '-translate-x-full'}`}
       >
         <div className="flex items-center justify-between px-4 h-14 border-b border-border shrink-0">
@@ -126,14 +128,12 @@ export function StudentLayout() {
 
       <div className="border-b-2 border-pink border-t-2 border-t-cyan h-9 overflow-hidden flex items-center bg-bg">
         <div className="flex whitespace-nowrap marquee-track">
-          {[1, 2].map(i => (
-            <div key={i} className="flex items-center gap-16 px-32 text-[10px] font-bold uppercase tracking-widest text-muted">
-              <span className="border border-success/50 text-success px-2 py-0.5">Catalogue disponible</span>
-              <span className="border border-pink/50 text-pink px-2 py-0.5">Faites vos demandes →</span>
-              <span className="border border-cyan/50 text-cyan px-2 py-0.5">Suivi en temps réel</span>
-              <span className="border border-border text-muted px-2 py-0.5">ICAM — Département Info</span>
-            </div>
-          ))}
+          <div className="flex items-center gap-16 px-32 text-[10px] font-bold uppercase tracking-widest text-muted">
+            <span className="border border-success/50 text-success px-2 py-0.5">Catalogue disponible</span>
+            <span className="border border-pink/50 text-pink px-2 py-0.5">Faites vos demandes →</span>
+            <span className="border border-cyan/50 text-cyan px-2 py-0.5">Suivi en temps réel</span>
+            <span className="border border-border text-muted px-2 py-0.5">ICAM — Département Info</span>
+          </div>
         </div>
       </div>
 

@@ -4,6 +4,7 @@ create extension if not exists "uuid-ossp";
 -- Enums
 create type user_role as enum ('student', 'admin');
 create type equipment_status as enum ('available', 'borrowed', 'unavailable');
+create type equipment_quality as enum ('excellent', 'good', 'fair', 'poor', 'damaged');
 create type loan_status as enum ('pending', 'active', 'closed', 'rejected');
 
 -- Profiles
@@ -29,6 +30,7 @@ create table equipment (
   category_id uuid not null references categories(id),
   serial_number text,
   status equipment_status not null default 'available',
+  quality equipment_quality not null default 'good',
   notes text,
   created_at timestamptz not null default now()
 );

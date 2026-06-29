@@ -16,7 +16,7 @@ export function PacksPage() {
   function openEdit(pack: Pack) { setEditing(pack); setShowForm(true) }
   function cancel() { setShowForm(false); setEditing(null) }
 
-  async function handleSubmit(values: { name: string; description: string; items: { category_id: string; quantity: number }[] }) {
+  async function handleSubmit(values: { name: string; description: string; items: { equipment_id: string; quantity: number }[] }) {
     if (editing) await update.mutateAsync({ id: editing.id, ...values })
     else await create.mutateAsync(values)
     cancel()

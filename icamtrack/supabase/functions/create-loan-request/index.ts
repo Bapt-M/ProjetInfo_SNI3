@@ -1,5 +1,6 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { notify, adminIds } from '../_shared/notify.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -72,6 +73,16 @@ serve(async (req) => {
 
     const { error: itemsErr } = await supabase.from('loan_items').insert(loanItems)
     if (itemsErr) throw itemsErr
+
+    // Notifie les admins de la nouvelle demande
+    const { data: profile } = await supabase
+      .from('profiles').select('full_name').eq('id', user.id).single()
+    await notify(supabase, await adminIds(supabase), {
+      type: 'request',
+      title: 'Nouvelle demande d\'emprunt',
+      body: `${profile?.full_name || 'Un étudiant'} a soumis une demande d'emprunt.`,
+      link: '/admin/demandes',
+    })
 
     return new Response(
       JSON.stringify({ id: loan.id }),

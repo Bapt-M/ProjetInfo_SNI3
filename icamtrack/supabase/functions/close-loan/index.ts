@@ -1,5 +1,6 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { notify } from '../_shared/notify.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -41,9 +42,21 @@ serve(async (req) => {
       await supabase.from('equipment').update({ status: 'available' }).in('id', equipmentIds)
     }
 
-    await supabase.from('loan_requests')
+    const { data: loan } = await supabase.from('loan_requests')
       .update({ status: 'closed', closed_at: now })
       .eq('id', loan_id)
+      .select('student_id')
+      .single()
+
+    // Notifie l'étudiant que son emprunt est clôturé (matériel rendu)
+    if (loan?.student_id) {
+      await notify(supabase, [loan.student_id], {
+        type: 'returned',
+        title: 'Emprunt clôturé',
+        body: 'Votre emprunt a été clôturé : le matériel est marqué comme rendu.',
+        link: '/historique',
+      })
+    }
 
     return new Response(
       JSON.stringify({ success: true }),

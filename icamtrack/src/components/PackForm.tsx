@@ -1,34 +1,46 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Plus, Trash2 } from 'lucide-react'
-import { useCategories } from '../hooks/useCategories'
+import { useEquipment } from '../hooks/useEquipment'
 import type { Pack } from '../lib/types'
 
-interface PackFormItem { category_id: string; quantity: number }
+// État interne du formulaire : on travaille par NOM de produit (stable et présent
+// dans defaultValues), puis on résout vers un equipment_id représentatif à la soumission.
+interface PackFormItem { product_name: string; quantity: number }
 
 interface Props {
   defaultValues?: Pack
-  onSubmit: (values: { name: string; description: string; items: PackFormItem[] }) => Promise<void>
+  onSubmit: (values: { name: string; description: string; items: { equipment_id: string; quantity: number }[] }) => Promise<void>
   onCancel: () => void
 }
 
 export function PackForm({ defaultValues, onSubmit, onCancel }: Props) {
-  const { data: categories } = useCategories()
+  const { data: equipment } = useEquipment()
+
+  // Produits = équipements dédupliqués par nom (un nom couvre plusieurs unités).
+  const products = useMemo(() => {
+    const byName = new Map<string, string>() // name -> equipment_id représentatif
+    for (const e of equipment ?? []) if (!byName.has(e.name)) byName.set(e.name, e.id)
+    return [...byName.entries()]
+      .map(([name, equipment_id]) => ({ name, equipment_id }))
+      .sort((a, b) => a.name.localeCompare(b.name))
+  }, [equipment])
+
   const [name, setName] = useState(defaultValues?.name ?? '')
   const [description, setDescription] = useState(defaultValues?.description ?? '')
   const [items, setItems] = useState<PackFormItem[]>(
-    defaultValues?.items?.map(i => ({ category_id: i.category_id, quantity: i.quantity })) ?? []
+    defaultValues?.items?.map(i => ({ product_name: i.equipment?.name ?? '', quantity: i.quantity })) ?? []
   )
   const [submitting, setSubmitting] = useState(false)
   const [formError, setFormError] = useState<string | null>(null)
 
   function addItem() {
-    const firstUnused = categories?.find(c => !items.some(i => i.category_id === c.id))
+    const firstUnused = products.find(p => !items.some(i => i.product_name === p.name))
     if (!firstUnused) return
-    setItems(prev => [...prev, { category_id: firstUnused.id, quantity: 1 }])
+    setItems(prev => [...prev, { product_name: firstUnused.name, quantity: 1 }])
   }
 
-  function updateCategory(index: number, category_id: string) {
-    setItems(prev => prev.map((item, i) => i === index ? { ...item, category_id } : item))
+  function updateProduct(index: number, product_name: string) {
+    setItems(prev => prev.map((item, i) => i === index ? { ...item, product_name } : item))
   }
 
   function changeQty(index: number, delta: number) {
@@ -45,13 +57,22 @@ export function PackForm({ defaultValues, onSubmit, onCancel }: Props) {
     e.preventDefault()
     setFormError(null)
     if (!name.trim()) { setFormError('Le nom est requis.'); return }
-    if (items.length === 0) { setFormError('Ajoutez au moins un article.'); return }
+    if (items.length === 0) { setFormError('Ajoutez au moins un produit.'); return }
     const hasDuplicate = items.some(
-      (item, i) => items.findIndex(x => x.category_id === item.category_id) !== i
+      (item, i) => items.findIndex(x => x.product_name === item.product_name) !== i
     )
-    if (hasDuplicate) { setFormError('Deux articles ne peuvent pas avoir la même catégorie.'); return }
+    if (hasDuplicate) { setFormError('Deux articles ne peuvent pas désigner le même produit.'); return }
+
+    const repByName = new Map(products.map(p => [p.name, p.equipment_id]))
+    const resolved = items.map(i => ({ equipment_id: repByName.get(i.product_name), quantity: i.quantity }))
+    if (resolved.some(r => !r.equipment_id)) { setFormError('Produit introuvable, rechargez la page.'); return }
+
     setSubmitting(true)
-    await onSubmit({ name: name.trim(), description: description.trim(), items })
+    await onSubmit({
+      name: name.trim(),
+      description: description.trim(),
+      items: resolved as { equipment_id: string; quantity: number }[],
+    })
     setSubmitting(false)
   }
 
@@ -79,7 +100,7 @@ export function PackForm({ defaultValues, onSubmit, onCancel }: Props) {
 
       <div>
         <div className="flex items-center justify-between mb-2">
-          <label className="text-[10px] font-bold uppercase tracking-[2px] text-muted">Articles du pack</label>
+          <label className="text-[10px] font-bold uppercase tracking-[2px] text-muted">Produits du pack</label>
           <button
             type="button"
             onClick={addItem}
@@ -91,7 +112,7 @@ export function PackForm({ defaultValues, onSubmit, onCancel }: Props) {
 
         {items.length === 0 && (
           <p className="text-muted text-[11px] font-bold uppercase py-3 border border-dashed border-border text-center">
-            Aucun article — cliquez sur Ajouter
+            Aucun produit — cliquez sur Ajouter
           </p>
         )}
 
@@ -99,17 +120,17 @@ export function PackForm({ defaultValues, onSubmit, onCancel }: Props) {
           {items.map((item, index) => (
             <div key={index} className="flex items-center gap-2 border border-border p-2">
               <select
-                value={item.category_id}
-                onChange={e => updateCategory(index, e.target.value)}
+                value={item.product_name}
+                onChange={e => updateProduct(index, e.target.value)}
                 className="flex-1 bg-bg border-2 border-border px-2 py-1.5 text-sm text-fg focus:outline-none focus:border-fg transition-colors"
               >
-                {categories?.map(c => (
+                {products.map(p => (
                   <option
-                    key={c.id}
-                    value={c.id}
-                    disabled={c.id !== item.category_id && items.some(i => i.category_id === c.id)}
+                    key={p.name}
+                    value={p.name}
+                    disabled={p.name !== item.product_name && items.some(i => i.product_name === p.name)}
                   >
-                    {c.name}
+                    {p.name}
                   </option>
                 ))}
               </select>

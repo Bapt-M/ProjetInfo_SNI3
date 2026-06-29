@@ -3,6 +3,7 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { LogOut, Menu, X } from 'lucide-react'
 import { useAuth } from '../../hooks/useAuth'
 import { useDashboardStats } from '../../hooks/useDashboard'
+import { NotificationBell } from '../NotificationBell'
 import { motion } from 'framer-motion'
 
 const nav = [
@@ -88,6 +89,7 @@ export function AdminLayout() {
 
         {/* User */}
         <div className="flex items-center gap-3 px-5 border-l border-border shrink-0 ml-auto">
+          <NotificationBell />
           <div className="w-7 h-7 bg-yellow text-black text-xs font-extrabold flex items-center justify-center uppercase shrink-0">
             {profile?.full_name?.charAt(0) ?? 'A'}
           </div>
@@ -112,7 +114,7 @@ export function AdminLayout() {
       {/* Panel */}
       <div
         id="mobile-drawer"
-        inert={!drawerOpen ? '' : undefined}
+        inert={!drawerOpen || undefined}
         className={`fixed inset-y-0 left-0 z-50 w-64 bg-surface border-r border-border transform transition-transform duration-200 sm:hidden flex flex-col ${drawerOpen ? 'translate-x-0' : '-translate-x-full'}`}
       >
         <div className="flex items-center justify-between px-4 h-14 border-b border-border shrink-0">
@@ -158,15 +160,13 @@ export function AdminLayout() {
       {/* ── MARQUEE ── */}
       <div className="border-b-2 border-pink border-t-2 border-t-cyan h-9 overflow-hidden flex items-center bg-bg">
         <div className="flex whitespace-nowrap marquee-track">
-          {[1, 2].map(i => (
-            <div key={i} className="flex items-center gap-16 px-32 text-[10px] font-bold uppercase tracking-widest text-muted">
-              <span className="flex items-center gap-1.5 border border-success/50 text-success px-2 py-0.5">● DISPO&nbsp;{stats?.available ?? '—'}</span>
-              <span className="flex items-center gap-1.5 border border-yellow-text/50 text-yellow-text px-2 py-0.5">● EMPRUNTÉS&nbsp;{stats?.borrowed ?? '—'}</span>
-              <span className="flex items-center gap-1.5 border border-pink/50 text-pink px-2 py-0.5">⚠ RETARD&nbsp;{stats?.late ?? '—'}</span>
-              <span className="flex items-center gap-1.5 border border-cyan/50 text-cyan px-2 py-0.5">◌ EN ATTENTE&nbsp;{stats?.pending ?? '—'}</span>
-              <span className="flex items-center gap-1.5 border border-border text-muted px-2 py-0.5">TOTAL&nbsp;{stats?.total ?? '—'} MATÉRIELS</span>
-            </div>
-          ))}
+          <div className="flex items-center gap-16 px-32 text-[10px] font-bold uppercase tracking-widest text-muted">
+            <span className="flex items-center gap-1.5 border border-success/50 text-success px-2 py-0.5">● DISPO&nbsp;{stats?.available ?? '—'}</span>
+            <span className="flex items-center gap-1.5 border border-yellow-text/50 text-yellow-text px-2 py-0.5">● EMPRUNTÉS&nbsp;{stats?.borrowed ?? '—'}</span>
+            <span className="flex items-center gap-1.5 border border-pink/50 text-pink px-2 py-0.5">⚠ RETARD&nbsp;{stats?.late ?? '—'}</span>
+            <span className="flex items-center gap-1.5 border border-cyan/50 text-cyan px-2 py-0.5">◌ EN ATTENTE&nbsp;{stats?.pending ?? '—'}</span>
+            <span className="flex items-center gap-1.5 border border-border text-muted px-2 py-0.5">TOTAL&nbsp;{stats?.total ?? '—'} MATÉRIELS</span>
+          </div>
         </div>
       </div>
 
